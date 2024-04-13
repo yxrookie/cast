@@ -896,14 +896,18 @@ func indirect(a interface{}) interface{} {
 	if a == nil {
 		return nil
 	}
+	// a is not a pointer, then return it as is
 	if t := reflect.TypeOf(a); t.Kind() != reflect.Ptr {
 		// Avoid creating a reflect.Value if it's not a pointer.
 		return a
 	}
+	// a is a pointer, then follow its pointer
 	v := reflect.ValueOf(a)
+	// keep dereferencing v until it's not a pointer or nil
 	for v.Kind() == reflect.Ptr && !v.IsNil() {
 		v = v.Elem()
 	}
+	// v is now the base type
 	return v.Interface()
 }
 
